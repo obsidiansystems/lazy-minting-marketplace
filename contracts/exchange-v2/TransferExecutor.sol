@@ -12,6 +12,8 @@ import "@openzeppelin/contracts-upgradeable/proxy/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "./lib/LibTransfer.sol";
 
+import "hardhat/console.sol";
+
 abstract contract TransferExecutor is Initializable, OwnableUpgradeable, ITransferExecutor {
     using LibTransfer for address;
 
@@ -37,6 +39,7 @@ abstract contract TransferExecutor is Initializable, OwnableUpgradeable, ITransf
         bytes4 transferDirection,
         bytes4 transferType
     ) internal override {
+        console.log("GOT HERE");
         if (asset.assetType.assetClass == LibAsset.ETH_ASSET_CLASS) {
             to.transferEth(asset.value);
         } else if (asset.assetType.assetClass == LibAsset.ERC20_ASSET_CLASS) {

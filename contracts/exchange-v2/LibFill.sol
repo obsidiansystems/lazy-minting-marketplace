@@ -21,7 +21,7 @@ library LibFill {
      * @param leftOrderFill current fill of the left order (0 if order is unfilled)
      * @param rightOrderFill current fill of the right order (0 if order is unfilled)
      */
-    function fillOrder(LibOrder.Order memory leftOrder, LibOrder.Order memory rightOrder, uint leftOrderFill, uint rightOrderFill) internal pure returns (FillResult memory) {
+    function fillOrder(LibOrder.Order memory leftOrder, LibOrder.Order memory rightOrder, uint leftOrderFill, uint rightOrderFill) internal view returns (FillResult memory) {
         (uint leftMakeValue, uint leftTakeValue) = LibOrder.calculateRemaining(leftOrder, leftOrderFill);
         (uint rightMakeValue, uint rightTakeValue) = LibOrder.calculateRemaining(rightOrder, rightOrderFill);
 
@@ -32,13 +32,13 @@ library LibFill {
         return fillRight(leftOrder.makeAsset.value, leftOrder.takeAsset.value, rightMakeValue, rightTakeValue);
     }
 
-    function fillRight(uint leftMakeValue, uint leftTakeValue, uint rightMakeValue, uint rightTakeValue) internal pure returns (FillResult memory result) {
+    function fillRight(uint leftMakeValue, uint leftTakeValue, uint rightMakeValue, uint rightTakeValue) internal view returns (FillResult memory result) {
         uint makerValue = LibMath.safeGetPartialAmountFloor(rightTakeValue, leftMakeValue, leftTakeValue);
         require(makerValue <= rightMakeValue, "fillRight: unable to fill");
         return FillResult(rightTakeValue, makerValue);
     }
 
-    function fillLeft(uint leftMakeValue, uint leftTakeValue, uint rightMakeValue, uint rightTakeValue) internal pure returns (FillResult memory result) {
+    function fillLeft(uint leftMakeValue, uint leftTakeValue, uint rightMakeValue, uint rightTakeValue) internal view returns (FillResult memory result) {
         uint rightTake = LibMath.safeGetPartialAmountFloor(leftTakeValue, rightMakeValue, rightTakeValue);
         require(rightTake <= leftMakeValue, "fillLeft: unable to fill");
         return FillResult(leftMakeValue, leftTakeValue);

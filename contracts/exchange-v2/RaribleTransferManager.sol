@@ -3,6 +3,7 @@
 pragma solidity >=0.6.9 <0.8.0;
 pragma abicoder v2;
 
+import "hardhat/console.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC721/IERC721Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/math/SafeMathUpgradeable.sol";
 import "@rarible/lib-asset/contracts/LibAsset.sol";
@@ -71,6 +72,7 @@ abstract contract RaribleTransferManager is OwnableUpgradeable, ITransferManager
         totalTakeValue = fill.takeValue;
         LibOrderDataV1.DataV1 memory leftOrderData = LibOrderData.parse(leftOrder);
         LibOrderDataV1.DataV1 memory rightOrderData = LibOrderData.parse(rightOrder);
+        console.log("Doing rarible transfers");
         if (feeSide == LibFeeSide.FeeSide.MAKE) {
             totalMakeValue = doTransfersWithFees(fill.makeValue, leftOrder.maker, leftOrderData, rightOrderData, makeMatch, takeMatch,  TO_TAKER);
             transferPayouts(takeMatch, fill.takeValue, rightOrder.maker, leftOrderData.payouts, TO_MAKER);
@@ -89,6 +91,7 @@ abstract contract RaribleTransferManager is OwnableUpgradeable, ITransferManager
         LibAsset.AssetType memory matchNft,
         bytes4 transferDirection
     ) internal returns (uint totalAmount) {
+        console.log("I CRASH NOW");
         totalAmount = calculateTotalAmount(amount, protocolFee, dataCalculate.originFees);
         uint rest = transferProtocolFee(totalAmount, amount, from, matchCalculate, transferDirection);
         rest = transferRoyalties(matchCalculate, matchNft, rest, amount, from, transferDirection);

@@ -3,6 +3,7 @@
 pragma solidity >=0.6.9 <0.8.0;
 
 import "./lib/LibMath.sol";
+import "hardhat/console.sol";
 import "@rarible/lib-asset/contracts/LibAsset.sol";
 
 library LibOrder {
@@ -24,12 +25,12 @@ library LibOrder {
         bytes data;
     }
 
-    function calculateRemaining(Order memory order, uint fill) internal pure returns (uint makeValue, uint takeValue) {
+    function calculateRemaining(Order memory order, uint fill) internal view returns (uint makeValue, uint takeValue) {
         takeValue = order.takeAsset.value.sub(fill);
         makeValue = LibMath.safeGetPartialAmountFloor(order.makeAsset.value, order.takeAsset.value, takeValue);
     }
 
-    function hashKey(Order memory order) internal pure returns (bytes32) {
+    function hashKey(Order memory order) internal view returns (bytes32) {
         return keccak256(abi.encode(
                 order.maker,
                 LibAsset.hash(order.makeAsset.assetType),
@@ -38,7 +39,7 @@ library LibOrder {
             ));
     }
 
-    function hash(Order memory order) internal pure returns (bytes32) {
+    function hash(Order memory order) internal view returns (bytes32) {
         return keccak256(abi.encode(
                 ORDER_TYPEHASH,
                 order.maker,

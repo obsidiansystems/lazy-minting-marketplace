@@ -10,6 +10,7 @@ import "./AssetMatcher.sol";
 import "./TransferExecutor.sol";
 import "./ITransferManager.sol";
 import "./lib/LibTransfer.sol";
+import "hardhat/console.sol";
 
 abstract contract ExchangeV2Core is Initializable, OwnableUpgradeable, AssetMatcher, TransferExecutor, OrderValidator, ITransferManager {
     using SafeMathUpgradeable for uint;
@@ -37,8 +38,34 @@ abstract contract ExchangeV2Core is Initializable, OwnableUpgradeable, AssetMatc
         LibOrder.Order memory orderRight,
         bytes memory signatureRight
     ) external payable {
+        bytes32 hashLeft = LibOrder.hash(orderLeft);
+        bytes32 hashRight = LibOrder.hash(orderRight);
+
+        console.log("Domain separator");
+        console.logBytes32(_domainSeparatorV4());
+
+        console.log("Block id");
+
+        uint chainId;
+        assembly {
+        chainId := chainid()
+        }
+
+        console.log(chainId);
+        console.log("Us: ", address(this));
+
+        //console.log(block.chainid);
+        //block.chanid;
+
+        console.log("Digest 1");
+        console.logBytes32(_hashTypedDataV4(hashLeft));
+
+        console.log("Digest 2");
+        console.logBytes32(_hashTypedDataV4(hashRight));
+
         validateFull(orderLeft, signatureLeft);
         validateFull(orderRight, signatureRight);
+
         if (orderLeft.taker != address(0)) {
             require(orderRight.maker == orderLeft.taker, "leftOrder.taker verification failed");
         }

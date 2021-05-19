@@ -3,6 +3,7 @@
 pragma solidity >=0.6.9 <0.8.0;
 
 import "./interfaces/ERC1271.sol";
+import "hardhat/console.sol";
 import "./LibOrder.sol";
 import "@openzeppelin/contracts-upgradeable/utils/AddressUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/cryptography/ECDSAUpgradeable.sol";
@@ -16,6 +17,7 @@ abstract contract OrderValidator is Initializable, ContextUpgradeable, EIP712Upg
     bytes4 constant internal MAGICVALUE = 0x1626ba7e;
 
     function __OrderValidator_init_unchained() internal initializer {
+        console.log("Called");
         __EIP712_init_unchained("Exchange", "2");
     }
 
@@ -25,6 +27,28 @@ abstract contract OrderValidator is Initializable, ContextUpgradeable, EIP712Upg
         } else {
             if (_msgSender() != order.maker) {
                 bytes32 hash = LibOrder.hash(order);
+                console.log("This is the hash");
+                console.logBytes32(hash);
+
+                console.log("Domain Separator");
+                console.logBytes32(_domainSeparatorV4());
+
+                console.log("Name hash");
+                console.logBytes32(_HASHED_NAME);
+
+                console.log("version hash");
+                console.logBytes32(_HASHED_VERSION);
+
+                console.log("The digest");
+                console.logBytes32(_hashTypedDataV4(hash));
+
+                // console.logBytes32(_hashTypedDataV4(hash));
+
+                console.log("Supposed signer: ", order.maker);
+                console.log("Signature");
+                console.logBytes(signature);
+
+                console.log("The signer", _hashTypedDataV4(hash).recover(signature));
                 if (order.maker.isContract()) {
                     require(
                         ERC1271(order.maker).isValidSignature(_hashTypedDataV4(hash), signature) == MAGICVALUE,
