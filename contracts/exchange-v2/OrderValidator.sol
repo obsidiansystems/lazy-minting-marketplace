@@ -34,10 +34,8 @@ abstract contract OrderValidator is Initializable, ContextUpgradeable, EIP712Upg
                 console.logBytes32(_domainSeparatorV4());
 
                 console.log("Name hash");
-                console.logBytes32(_HASHED_NAME);
 
                 console.log("version hash");
-                console.logBytes32(_HASHED_VERSION);
 
                 console.log("The digest");
                 console.logBytes32(_hashTypedDataV4(hash));

@@ -7,7 +7,7 @@ import "./exchange-v2/ExchangeV2.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/Initializable.sol";
 
 contract Exchanger is Initializable, ExchangeV2 {
-    function initialize(address memory erc1155) public initializer {
-        __ExchangeV2_init(INftTransferProxy(erc1155), IERC20TransferProxy(address(this)), 0, address(this), IRoyaltiesProvider(address(this)));
+    function initialize() public initializer {
+        __ExchangeV2_init(INftTransferProxy(address(this)), IERC20TransferProxy(address(this)), 0, address(this), IRoyaltiesProvider(address(this)));
     }
 }
