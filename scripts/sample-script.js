@@ -82,42 +82,52 @@ const hashDomain = d => {
 
 const hashOrder = order => {
   return keccak256(abi.encode([ "bytes32"
-                                                   , "address"
-                                                   , "bytes32" // After hashing
-                                                   , "address"
-                                                   , "bytes32"
-                                                   , "uint256"
-                                                   , "uint256"
-                                                   , "uint256"
-                                                   , "bytes4"
-                                                   , "bytes32"
-                                                  ]
-                                                  , [ orderTypeHash
-                                                      , order.maker
-                                                    , hashAsset(order.makeAsset)
-                                                      , order.taker
-                                                      , hashAsset(order.takeAsset)
-                                                      , order.salt
-                                                      , order.start
-                                                      , order.end
-                                                      , order.dataType
-                                                      , keccak256(order.data)
-                                                    ]));
+                               , "address"
+                               , "bytes32" // After hashing
+                               , "address"
+                               , "bytes32"
+                               , "uint256"
+                               , "uint256"
+                               , "uint256"
+                               , "bytes4"
+                               , "bytes32"
+                               ]
+                               , [ orderTypeHash
+                                 , order.maker
+                                 , hashAsset(order.makeAsset)
+                                 , order.taker
+                                 , hashAsset(order.takeAsset)
+                                 , order.salt
+                                 , order.start
+                                 , order.end
+                                 , order.dataType
+                                 , keccak256(order.data)
+                                 ]));
 };
 
 async function main() {
   const [owner01, owner02] = await ethers.getSigners();
 
+  const ERC1155 = await hre.ethers.getContractFactory("ERC1155Upgradeable");
+
+  const erc1155 = await upgrades.deployProxy(ERC1155, []);
+  await erc1155.deployed();
+
+  const TransferProxy = await hre.ethers.getContractFactory("TransferProxy");
+
+  const transferProxy = await upgrades.deployProxy(TransferProxy, []);
+  await transferProxy.deployed();
+
   // We get the contract to deploy
   const ExchangeV2 = await hre.ethers.getContractFactory("Exchanger");
 
-  const exchangeV2 = await upgrades.deployProxy(ExchangeV2, []); // , [owner01.address, owner01.address, 0, owner01.address, owner01.address]);
+  const exchangeV2 = await upgrades.deployProxy(ExchangeV2, [transferProxy.address]);
   await exchangeV2.deployed();
 
   order1 = {
     maker: owner01.address,
     makeAsset: {
-      assetType: { assetClass: bytes4(hash("ERC1155")), data: abi.encode(["address", "uint"], [owner01.address, 3]) },
+      assetType: { assetClass: bytes4(hash("ERC1155")), data: abi.encode(["address", "uint"], [erc1155.address, 3]) },
       value: 1,
     },
     taker: owner02.address,
@@ -140,7 +150,7 @@ async function main() {
     },
     taker: owner01.address,
     takeAsset: {
-      assetType: { assetClass: bytes4(hash("ERC1155")), data: abi.encode(["address", "uint"], [owner01.address, 3]) },
+      assetType: { assetClass: bytes4(hash("ERC1155")), data: abi.encode(["address", "uint"], [erc1155.address, 3]) },
       value: 1,
     },
     salt: 1,

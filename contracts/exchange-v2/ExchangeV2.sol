@@ -16,21 +16,10 @@ contract ExchangeV2 is ExchangeV2Core, RaribleTransferManager {
         address newDefaultFeeReceiver,
         IRoyaltiesProvider newRoyaltiesProvider
     ) internal initializer {
-        console.log("Called");
         __Context_init_unchained();
         __Ownable_init_unchained();
         __TransferExecutor_init_unchained(_transferProxy, _erc20TransferProxy);
         __RaribleTransferManager_init_unchained(newProtocolFee, newDefaultFeeReceiver, newRoyaltiesProvider);
         __OrderValidator_init_unchained();
     }
-
-    /*
-    function initialize (INftTransferProxy _transferProxy,
-        IERC20TransferProxy _erc20TransferProxy,
-        uint newProtocolFee,
-        address newDefaultFeeReceiver,
-        IRoyaltiesProvider newRoyaltiesProvider
-    ) external {
-        __ExchangeV2_init(_transferProxy, _erc20TransferProxy, newProtocolFee, newDefaultFeeReceiver, newRoyaltiesProvider);
-        }*/
 }
