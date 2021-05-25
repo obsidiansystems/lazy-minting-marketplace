@@ -39,7 +39,6 @@ abstract contract TransferExecutor is Initializable, OwnableUpgradeable, ITransf
         bytes4 transferDirection,
         bytes4 transferType
     ) internal override {
-        console.log("GOT HERE");
         if (asset.assetType.assetClass == LibAsset.ETH_ASSET_CLASS) {
             to.transferEth(asset.value);
         } else if (asset.assetType.assetClass == LibAsset.ERC20_ASSET_CLASS) {
