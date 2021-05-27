@@ -17,6 +17,12 @@ import "@rarible/royalties/contracts/IRoyaltiesProvider.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 
+/*
+ * This is our stubbed transfer proxy, it implements the interfaces needed by Exchanger but only logs they were called
+ * this was because all of the validation logic and checks have already run up to this point, so transfering is as easy as
+ * taking the passed in interface and calling the analogous transfer function.
+ */
+
 contract TransferProxy is Initializable, INftTransferProxy, IERC20TransferProxy, ITransferProxy, IRoyaltiesProvider {
     function initialize() public initializer
     {
